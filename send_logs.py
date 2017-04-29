@@ -4,6 +4,7 @@ import apache_tools
 import json
 import log_tools
 import os
+import sql_connector
 import sys
 import urllib.request
 
@@ -15,19 +16,14 @@ def check_monitors(config_obj):
         #find send_to object
         log_destination_config = {}
 
-        for connection in config_obj['connections']:
+        for connection in config_obj['settings']['connections']:
             if connection['name'] == monitor["send_to"]:
                 log_destination_config = connection
                 break
 
         # Proccess the various supported log types
         if monitor["type"] == "apache access combined":
-            log_lines = log_tools.read_single_line_log_file(monitor["location"])
-
-            # Check to see if log was rotated
-            if len(log_lines) < monitor["last_line_read"]:
-                monitor["last_line_read"] = 0
-                print ("Log Rotated: %s" % str(monitor["location"]))
+            log_lines = log_tools.read_line_delimited_file(monitor)
 
             # Parse Apache access combined
             log_list = apache_tools.read_apache_logfile(log_lines, monitor["last_line_read"])
@@ -36,23 +32,32 @@ def check_monitors(config_obj):
             for log_entry in log_list:
                 send_success = proccess_event(monitor, log_destination_config, log_entry)
                 line_count = line_count + 1
+        elif monitor["type"] == "delimited file":
+            log_lines = log_tools.read_line_delimited_file(monitor)
+            log_list = log_tools.parse_delimited_file(log_lines, monitor["last_line_read"], monitor)
+            send_success = sql_connector.send_data_to_sql(log_list, log_destination_config)
 
-    config_obj.write_config()
+    if send_success == True:
+        config_save()
 
 def config_load():
     config_settings = {}
 
     try:
-        script_dir = os.path.dirname(__file__)
+        script_dir = os.path.abspath(__file__)
+        filename_start = script_dir.rfind(os.sep)
+        script_dir = script_dir[:filename_start]
         config_file = "config.json"
         file_path = os.path.join(script_dir, config_file)
 
         if os.path.exists(file_path):
             json_file = open(file_path)
             config_settings = json.load(json_file)
+        else:
+            print ("Config file does not exist: %s" % (file_path))
 
     except:
-        print ("Error loading config file.")
+        print ("Error loading config file: %s" % (file_path))
 
     return config_settings
 
@@ -67,10 +72,6 @@ def config_save(config_object):
 
     except:
         print ("Could not write config file.")
-
-def main():
-    config_obj = config_load()
-    check_monitors(config_obj)
 
 def proccess_event(monitor_config, destination_config, log_data):
     host_id = monitor_config["host_id"]
@@ -109,7 +110,6 @@ def proccess_event(monitor_config, destination_config, log_data):
                 monitor_config["last_time_read"] = int(datetime.now().strftime('%s'))
             else:
                 print ("Error sending request, server responded with error.")
-                break
 
         except Exception as err:
             post_success = False
@@ -130,5 +130,10 @@ def test_apache():
         print (str(vs))
 
     # print (log_list)
+
+def main():
+    config_obj = config_load()
+    check_monitors(config_obj)
+
 
 main()
