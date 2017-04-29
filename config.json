@@ -1,78 +1,97 @@
 {
+    "monitor": [
+        {
+            "additional_fields": {
+                "indoor_latitude": 38.0,
+                "indoor_longitude": -77.0,
+                "outdoor_latitude": 38.0,
+                "outdoor_longitude": -77.0
+            },
+            "data_maping": [
+                {
+                    "indexes": [
+                        0,
+                        1
+                    ],
+                    "label": "report_time",
+                    "spacer": " "
+                },
+                {
+                    "indexes": [
+                        3
+                    ],
+                    "label": "pm2_5"
+                },
+                {
+                    "indexes": [
+                        4
+                    ],
+                    "label": "aqi_us"
+                },
+                {
+                    "indexes": [
+                        6
+                    ],
+                    "label": "pm_10"
+                },
+                {
+                    "indexes": [
+                        7
+                    ],
+                    "label": "aqi_us_outdoor"
+                },
+                {
+                    "indexes": [
+                        9
+                    ],
+                    "label": "temperature_c"
+                },
+                {
+                    "indexes": [
+                        11
+                    ],
+                    "label": "humidity"
+                },
+                {
+                    "indexes": [
+                        12
+                    ],
+                    "label": "co2"
+                },
+                {
+                    "indexes": [
+                        13
+                    ],
+                    "label": "voc"
+                }
+            ],
+            "delimiter": ";",
+            "has_header": true,
+            "host_id": "AVISUAL",
+            "last_line_read": 1171,
+            "last_time_read": 1493506725,
+            "location": "/Volumes/airvisual/201704_AirVisual_values.txt",
+            "send_to": "env_db",
+            "type": "delimited file"
+        }
+    ],
     "settings": {
         "connections": [
             {
-              "name": "env_db",
-              "type": "sql_db",
-              "host": "localhost",
-              "port": 3306,
-              "user": "",
-              "password": "",
-              "database_name": "Environment_Log"
+                "database_name": "Environment_Log",
+                "host": "localhost",
+                "name": "env_db",
+                "password": "",
+                "port": 3306,
+                "type": "sql_db",
+                "user": ""
             },
             {
-              "name": "splunk_server",
-              "type": "web_request",
-              "address": "http://127.0.0.1:8088/services/collector",
-              "token": ""
+                "address": "http://127.0.0.1:8088/services/collector",
+                "name": "splunk_server",
+                "token": "",
+                "type": "web_request"
             }
         ]
-    },
-    "monitor": [
-        {
-            "host_id": "AVISUAL",
-            "last_line_read": 0,
-            "last_time_read": 0,
-            "location": "/Volumes/airvisual/201704_AirVisual_values.txt",
-            "send_to": "env_db",
-            "type": "delimited file",
-            "delimiter": ";",
-            "has_header": true,
-            "data_maping": [
-              {
-                "indexes": [0,1],
-                "spacer": " ",
-                "label": "report_time"
-              },
-              {
-                "indexes": [3],
-                "label": "pm2_5"
-              },
-              {
-                "indexes": [4],
-                "label": "aqi_us"
-              },
-              {
-                "indexes": [6],
-                "label": "pm_10"
-              },
-              {
-                "indexes": [7],
-                "label": "aqi_us_outdoor"
-              },
-              {
-                "indexes": [9],
-                "label": "temperature_c"
-              },
-              {
-                "indexes": [11],
-                "label": "humidity"
-              },
-              {
-                "indexes": [12],
-                "label": "co2"
-              },
-              {
-                "indexes": [13],
-                "label": "voc"
-              }
-            ],
-            "additional_fields": {
-              "indoor_latitude": 38.906076,
-              "indoor_longitude": -77.004620,
-              "outdoor_latitude": 38.921896,
-              "outdoor_longitude": -77.013225
-            }
-        }
-    ]
+    }
 }

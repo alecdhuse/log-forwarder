@@ -38,7 +38,7 @@ def check_monitors(config_obj):
             send_success = sql_connector.send_data_to_sql(log_list, log_destination_config)
 
     if send_success == True:
-        config_save()
+        config_save(config_obj)
 
 def config_load():
     config_settings = {}
@@ -63,12 +63,14 @@ def config_load():
 
 def config_save(config_object):
     try:
-        script_dir = os.path.dirname(__file__)
+        script_dir = os.path.abspath(__file__)
+        filename_start = script_dir.rfind(os.sep)
+        script_dir = script_dir[:filename_start]
         config_file = "config.json"
         file_path = os.path.join(script_dir, config_file)
 
         with open(file_path, 'w') as outfile:
-            json.dump(config_settings, outfile, sort_keys = True, indent = 4)
+            json.dump(config_object, outfile, sort_keys = True, indent = 4)
 
     except:
         print ("Could not write config file.")
