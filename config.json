@@ -2,10 +2,10 @@
     "monitor": [
         {
             "additional_fields": {
-                "indoor_latitude": 38.906076,
-                "indoor_longitude": -77.00462,
-                "outdoor_latitude": 38.921896,
-                "outdoor_longitude": -77.013225
+                "indoor_latitude": 38.9,
+                "indoor_longitude": -77.0,
+                "outdoor_latitude": 38.9,
+                "outdoor_longitude": -77.0
             },
             "data_maping": [
                 {
@@ -67,9 +67,9 @@
             ],
             "delimiter": ";",
             "has_header": true,
-            "host_id": "AVISUAL-LGMRMCC",
-            "last_line_read": 1397,
-            "last_time_read": 1493570859,
+            "host_id": "AVISUAL",
+            "last_line_read": 1455,
+            "last_time_read": 1493574081,
             "location": "/Volumes/airvisual/201704_AirVisual_values.txt",
             "send_to": "env_db",
             "type": "delimited file"
@@ -81,10 +81,10 @@
                 "database_name": "Environment_Log",
                 "host": "localhost",
                 "name": "env_db",
-                "password": "Thisisthez_logpassword",
+                "password": "",
                 "port": 3306,
                 "type": "sql_db",
-                "user": "z_log"
+                "user": ""
             },
             {
                 "address": "http://127.0.0.1:8088/services/collector",
