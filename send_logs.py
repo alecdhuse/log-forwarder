@@ -11,8 +11,9 @@ import urllib.request
 from datetime import datetime
 
 def check_monitors(config_obj):
-    for monitor in config_obj['monitor']:
+    send_success = False
 
+    for monitor in config_obj['monitor']:
         #find send_to object
         log_destination_config = {}
 
@@ -23,19 +24,22 @@ def check_monitors(config_obj):
 
         # Proccess the various supported log types
         if monitor["type"] == "apache access combined":
-            log_lines = log_tools.read_line_delimited_file(monitor)
+            log_lines = log_tools.read_line_delimited_file(monitor, monitor["last_line_read"])
 
             # Parse Apache access combined
-            log_list = apache_tools.read_apache_logfile(log_lines, monitor["last_line_read"])
+            log_list = apache_tools.read_apache_logfile(log_lines, 0)
             line_count = 0
 
             for log_entry in log_list:
                 send_success = proccess_event(monitor, log_destination_config, log_entry)
                 line_count = line_count + 1
         elif monitor["type"] == "delimited file":
-            log_lines = log_tools.read_line_delimited_file(monitor)
-            log_list = log_tools.parse_delimited_file(log_lines, monitor["last_line_read"], monitor)
-            send_success = sql_connector.send_data_to_sql(log_list, log_destination_config)
+            try:
+                log_lines = log_tools.read_line_delimited_file(monitor, monitor["last_line_read"])
+                log_list = log_tools.parse_delimited_file(log_lines, monitor)
+                send_success = sql_connector.send_data_to_sql(log_list, log_destination_config)
+            except Exception as e:
+                print ("Error reading delimited file: %s" % (str(e)))
 
     if send_success == True:
         config_save(config_obj)

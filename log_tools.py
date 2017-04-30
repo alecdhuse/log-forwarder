@@ -1,5 +1,6 @@
 #!/usr/local/bin/python3.0
 
+import errno
 import os
 import time
 
@@ -12,27 +13,40 @@ def read_single_line_log_file(log_file):
             log_lines = f.readlines()
     else:
         print ("Log file not found: %s" % str(log_file))
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), str(log_file))
 
     return log_lines
 
-def read_line_delimited_file(monitor_obj):
-    log_lines = read_single_line_log_file(monitor_obj["location"])
+def read_line_delimited_file(monitor_obj, read_start_line):
+    try:
+        log_lines = read_single_line_log_file(monitor_obj["location"])
 
-    # Check to see if log was rotated
-    if len(log_lines) < monitor_obj["last_line_read"]:
-        monitor_obj["last_line_read"] = 0
-        print ("Log Rotated: %s" % str(monitor_obj["location"]))
+        # Check to see if log was rotated
+        if len(log_lines) < monitor_obj["last_line_read"]:
+            monitor_obj["last_line_read"] = 0
+            print ("Log Rotated: %s" % str(monitor_obj["location"]))
 
-    monitor_obj["last_line_read"] = len(log_lines)
-    monitor_obj["last_time_read"] = int(time.time())
+        monitor_obj["last_line_read"] = len(log_lines)
+        monitor_obj["last_time_read"] = int(time.time())
+
+        if read_start_line > 0:
+            print ("Starting at line %i" % (read_start_line))
+            read_start_line = read_start_line * -1
+            total_file_lines = len(log_lines)
+            log_lines = log_lines[:read_start_line]
+            lines_to_read = len(log_lines)
+            print ("File contains %i lines, only reading the last %i lines." % (total_file_lines, lines_to_read))
+    except Exception as e:
+            print ("Error reading delimited file.")
+            raise e
+
     return log_lines
 
-def parse_delimited_file(log_lines, read_start_line, monitor_config):
+def parse_delimited_file(log_lines, monitor_config):
     first_line_read = False
     parsed_data = []
-    read_start_line = read_start_line * -1
 
-    for line in log_lines[read_start_line:]:
+    for line in log_lines:
         data_entry = []
 
         if (monitor_config["has_header"] == True and first_line_read == False):

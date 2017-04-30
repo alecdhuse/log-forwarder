@@ -1,6 +1,7 @@
 import pymysql
 
 def send_data_to_sql(data, connection_settings):
+    sql = ""
 
     try:
         # Open database connection
@@ -40,6 +41,10 @@ def send_data_to_sql(data, connection_settings):
         # disconnect from server
         db_conn.close()
 
+        print ("%s rows added to DB." % (str(len(data))))
+
         return True
-    except:
+    except Exception as e:
+        print ("Error sending data to SQL database: %s" % (str(e)))
+        print ("Last command: %s" % (sql))
         return False
