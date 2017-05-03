@@ -4,7 +4,7 @@
             "additional_fields": {
                 "indoor_latitude": 38.9,
                 "indoor_longitude": -77.0,
-                "outdoor_latitude": 38.9,
+                "outdoor_latitude": 38.96,
                 "outdoor_longitude": -77.0
             },
             "data_maping": [
@@ -66,11 +66,10 @@
                 }
             ],
             "delimiter": ";",
+            "file_locations": [],
             "has_header": true,
             "host_id": "AVISUAL",
-            "last_line_read": 1455,
-            "last_time_read": 1493574081,
-            "location": "/Volumes/airvisual/201704_AirVisual_values.txt",
+            "location": "/Volumes/airvisual/*_AirVisual_values.txt",
             "send_to": "env_db",
             "type": "delimited file"
         }
@@ -80,7 +79,7 @@
             {
                 "database_name": "Environment_Log",
                 "host": "localhost",
-                "name": "env_db",
+                "name": "",
                 "password": "",
                 "port": 3306,
                 "type": "sql_db",
