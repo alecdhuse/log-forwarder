@@ -72,9 +72,6 @@
             "location": "/Volumes/airvisual/*_AirVisual_values.txt",
             "send_to": "env_db",
             "type": "delimited file"
-        },
-        {
-          "location": "/var/log/secure"
         }
     ],
     "settings": {
